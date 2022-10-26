@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | SMASH C.L.A.R.A.</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="apple-touch-icon" href="TemplateData/favicon.ico">
+
+  <meta name="description"
+    content="Ethereum SMASH C.L.A.R.A. Minimum Valuable Product using Unity-WebGL, Metamask and ChainSafe SDK.<br>You will need Metamask and some “fake” Ether to play and submit your top score - Get them at: https://faucet.geekbyte.com/">
+  <meta name="title" content="Clara MVP - A Unity WebGL build that connects to the (görli) ethereum network">
+
+  <meta property="og:title" content="Clara MVP - A Unity WebGL build that connects to the (görli) ethereum network">
+  <meta property="og:description"
+    content="Ethereum SMASH C.L.A.R.A. Minimum Valuable Product using Unity-WebGL, Metamask and ChainSafe SDK.<br>You will need Metamask and some “fake” Ether to play and submit your top score - Get them at: https://faucet.geekbyte.com/">
+  <meta property="og:image" content="https://i.imgur.com/WD3knpW.png">
+  <meta property="og:image:width" content="256" />
+  <meta property="og:image:height" content="256" />
+  <meta property="og:url" content="https:app.clara-mvp.it">
+  <!--   <meta property="fb:app_id" content="494467918021044" />
+ -->
+  <meta property="og:title" content="Clara MVP - A Unity WebGL build that connects to the (görli) ethereum network">
+  <meta property="twitter:description"
+    content="Ethereum SMASH C.L.A.R.A. Minimum Valuable Product using Unity-WebGL, Metamask and ChainSafe SDK.<br>You will need Metamask and some “fake” Ether to play and submit your top score - Get them at: https://faucet.geekbyte.com/">
+  <meta property="twitter:image" content="https://i.imgur.com/WD3knpW.png">
+  <meta property="twitter:card" content="summary_large_image">
+
+  <link rel="stylesheet" href="TemplateData/style.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+        /*
+    Used to set the network
+    1 Mainnet
+    3 Ropsten
+    4 Rinkeby
+    5 Goerli
+    42 Kovan
+    56 Binance Smart Chain Mainnet
+    97 Binance Smart Chain Testnet
+    100 xDai
+    137 Matic
+    1287 Moonbase Testnet
+    80001 Matic Testnet
+    43113 Avalanche Testnet
+    43114 Avalanche Mainnet
+    */
+
+    window.web3NetworkId = 5;
+    window.web3NetworkName = "goerli"
+
+    window.addEventListener('load', function () {
+      if (window.ethereum) {
+        // Checking metamask
+        connectToMetamask();
+      } else {
+        console.log("Non-Ethereum browser detected. You should consider installing MetaMask.");
+        document.getElementById("metamaskWarning").style.fontSize = "1.5rem";
+        document.getElementById("metamaskWarning").classList.add('pulse');
+        document.getElementById("metamaskWarning").innerText = 'Non-Ethereum browser detected.. Please install and connect to Metamask';
+        document.getElementById("btnConnectToMetamask").style.visibility = "hidden";
+        document.getElementById("unity-canvas").style.visibility = "hidden"; // hide game 
+      }
+    });
+
+    window.ethereum.on("networkChanged", function () {
+      location.reload();
+    });
+
+    window.ethereum.on("accountsChanged", function () {
+      location.reload();
+    });
+
+    function checkMetamask() {
+      if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+        if (window.ethereum.networkVersion !== '5') { // Goerli -> https://ethereum.stackexchange.com/a/85196
+          document.getElementById("metamaskWarning").innerText = 'Please connect to Göerli Network for testing';
+          document.getElementById("unity-canvas").style.visibility = "hidden"; // hide game if not goerli network
+          document.getElementById("metamaskWarning").style.fontSize = "1.5rem";
+          document.getElementById("metamaskWarning").classList.add('pulse');
+        }
+        document.getElementById("btnConnectToMetamask").style.visibility = "hidden";
+      }
+    }
+
+    async function connectToMetamask() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        // connect popup
+        await ethereum.enable();
+        checkMetamask();
+      }
+    }
+
+  </script>
+  <script src="TemplateData/web3.min.js"></script>
+  <style>
+    /* Just for pulse animation */
+
+
+    .pulse {
+      -webkit-animation: color_change 1s infinite alternate;
+      -moz-animation: color_change 1s infinite alternate;
+      -ms-animation: color_change 1s infinite alternate;
+      -o-animation: color_change 1s infinite alternate;
+      animation: color_change 1s infinite alternate;
+    }
+
+    @-webkit-keyframes color_change {
+      from {
+        color: red;
+      }
+
+      to {
+        color: yellow;
+      }
+    }
+
+    @-moz-keyframes color_change {
+      from {
+        color: red;
+      }
+
+      to {
+        color: yellow;
+      }
+    }
+
+    @-ms-keyframes color_change {
+      from {
+        color: red;
+      }
+
+      to {
+        color: yellow;
+      }
+    }
+
+    @-o-keyframes color_change {
+      from {
+        color: red;
+      }
+
+      to {
+        color: yellow;
+      }
+    }
+
+    @keyframes color_change {
+      from {
+        color: red;
+      }
+
+      to {
+        color: yellow;
+      }
+    }
+
+    .sidebar {
+      background-color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .metamask-button {
+      display: inline-block;
+      color: #444;
+      border: 1px solid #CCC;
+      background: #DDD;
+      box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      vertical-align: middle;
+
+      padding: 5px;
+      text-align: center;
+    }
+
+    .metamask-button:active {
+      color: red;
+      box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+    }
+
+    .metamask-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body style="display: flex; flex-direction: row;">
+  <div class="sidebar">
+    <div style="text-align: center;">
+      <h1 style="font-size: 1.5rem; color: black; margin: 0.75rem; text-decoration: underline;">Made with: </h1>
+    </div>
+    <a target="_blank" href="https://unity.com/" style="text-align: center; margin: 0.75rem;">
+      <img src="./assets/logos/unity.png">
+    </a>
+    <a target="_blank"
+      href="https://docs.unity3d.com/Manual/webgl-gettingstarted.html#:~:text=What%20is%20Unity%20WebGL%3F,content%20in%20a%20web%20browser."
+      style="text-align: center; margin: 0.5rem;">
+      <img src="./assets/logos/webGL.jpeg">
+    </a>
+    <a target="_blank" href="https://github.com/ChainSafe/web3.unity" style="text-align: center; margin: 0.75rem;">
+      <img src="./assets/logos/chainsafe.png">
+    </a>
+    <a target="_blank" href="https://metamask.io/" style="text-align: center; margin: 0.75rem;">
+      <img src="./assets/logos/metamask.png">
+    </a>
+  </div>
+  <div class="webgl-wrapper">
+    <div class="aspect"></div>
+    <div class="webgl-content">
+      <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas" width=960 height=540></canvas>
+        <div id="unity-loading-bar">
+          <div id="unity-logo"></div>
+          <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+          </div>
+        </div>
+        <div id="unity-footer">
+          <div id="unity-fullscreen-button"></div>
+          <p>
+          <h1 style="font-size: 1.25rem; color:blanchedalmond">Ethereum SMASH C.L.A.R.A. Minimum Valuable Product using
+            Unity-WebGL, Metamask and ChainSafe SDK</h1>
+          <h1 style="font-size: 1rem; color:white">Can you beat your top score and the top 3? Your top score
+            will be stored in ethereum blockchain!</h1>
+          <h1 id="metamaskWarning" style="font-size: 1rem; color:darkorange; text-decoration: underline;">You will
+            need Metamask and some “fake” Ether to play and submit your top score - Get them at:
+            <a href="https://faucet.geekbyte.com/"
+              style="color:yellow; text-decoration: uppercase; font-size: 1.25rem;">
+              https://faucet.geekbyte.com/
+            </a>
+          </h1>
+          </p>
+          <div class="metamask-container">
+            <div class="metamask-button" href="#" id="btnConnectToMetamask" onClick="connectToMetamask()">Connect
+              account to Metamask
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/client.loader.js";
+    var config = {
+      dataUrl: buildUrl + "/client.data",
+      frameworkUrl: buildUrl + "/client.framework.js",
+      codeUrl: buildUrl + "/client.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+      companyName: "GorlitzerLabs",
+      productName: "SMASH C.L.A.R.A.",
+      productVersion: "0.4",
+    };
+
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    var mobileWarning = document.querySelector("#unity-mobile-warning");
+
+    // By default Unity keeps WebGL canvas render target size matched with
+    // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+    // Set this to false if you want to decouple this synchronization from
+    // happening inside the engine, and you would instead like to size up
+    // the canvas DOM size and WebGL render target sizes yourself.
+    // config.matchWebGLToCanvasSize = false;
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      container.className = "unity-mobile";
+      // Avoid draining fillrate performance on mobile devices,
+      // and default/override low DPI mode on mobile browsers.
+      config.devicePixelRatio = 1;
+      mobileWarning.style.display = "block";
+      setTimeout(() => {
+        mobileWarning.style.display = "none";
+      }, 5000);
+    } else {
+      canvas.style.width = "960px";
+      canvas.style.height = "540px";
+    }
+    loadingBar.style.display = "block";
+
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = 100 * progress + "%";
+      }).then((unityInstance) => {
+        loadingBar.style.display = "none";
+        window.unityInstance = unityInstance; // <-- this is required for two way communication between .jslib and .c#
+        fullscreenButton.onclick = () => {
+          unityInstance.SetFullscreen(1);
+        };
+      }).catch((message) => {
+        alert(message);
+      });
+    };
+    document.body.appendChild(script);
+  </script>
+</body>
+
+</html>
